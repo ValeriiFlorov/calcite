@@ -6285,6 +6285,37 @@ public abstract class SqlOperatorBaseTest {
         "ANY");
   }
 
+
+  @Test
+  public void testArrayMap() {
+    tester.setFor(SqlStdOperatorTable.ITEM);
+    tester.checkScalarExact("MAP[1,1]",
+            "(INTEGER NOT NULL, INTEGER NOT NULL) MAP NOT NULL",
+            "{1=1}");
+
+    tester.checkScalarExact("MAP[ARRAY[1,1],ARRAY[3]]",
+            "(INTEGER NOT NULL ARRAY NOT NULL, INTEGER NOT NULL ARRAY NOT NULL) MAP NOT NULL",
+            "{[1, 1]=[3]}");
+
+
+    tester.checkScalarExact("ARRAY[1,1]",
+            "INTEGER NOT NULL ARRAY NOT NULL",
+            "[1, 1]");
+
+    tester.checkScalarExact("ARRAY[MAP[1,1]]",
+            "(INTEGER NOT NULL, INTEGER NOT NULL) MAP NOT NULL ARRAY NOT NULL",
+            "[{1=1}]");
+
+    tester.checkScalarExact("MULTISET[1,2]",
+            "INTEGER NOT NULL MULTISET NOT NULL",
+            "[1, 2]");
+
+    tester.checkScalarExact("ARRAY[MULTISET[1,2]]",
+            "INTEGER NOT NULL MULTISET NOT NULL ARRAY NOT NULL",
+            "[[1, 2]]");
+  }
+
+
   @Test public void testMapValueConstructor() {
     tester.setFor(SqlStdOperatorTable.MAP_VALUE_CONSTRUCTOR, VM_JAVA);
 
