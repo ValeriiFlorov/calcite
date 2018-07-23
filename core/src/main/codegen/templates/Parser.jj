@@ -5130,6 +5130,7 @@ SqlIdentifier ReservedFunctionName() :
 {
     (
         <ABS>
+    |   <ARRAY_AGG>
     |   <AVG>
     |   <CARDINALITY>
     |   <CEILING>
@@ -5476,6 +5477,7 @@ SqlPostfixOperator PostfixRowOperator() :
 |   < APPLY: "APPLY" >
 |   < ARE: "ARE" >
 |   < ARRAY: "ARRAY" >
+|   < ARRAY_AGG: "ARRAY_AGG" >
 |   < ARRAY_MAX_CARDINALITY: "ARRAY_MAX_CARDINALITY" >
 |   < AS: "AS" >
 |   < ASC: "ASC" >

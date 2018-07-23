@@ -1954,6 +1954,21 @@ public class SqlStdOperatorTable extends ReflectiveSqlOperatorTable {
           SqlFunctionCategory.SYSTEM);
 
   /**
+   * <code>ARRAY_AGG</code> aggregate function.
+   */
+  public static final SqlAggFunction ARRAY_AGG =
+      new SqlAggFunction(SqlKind.ARRAY_AGG.name(),
+          null,
+          SqlKind.ARRAY_AGG,
+          ReturnTypes.ARRAY,
+          null,
+          OperandTypes.ANY,
+          SqlFunctionCategory.SYSTEM,
+          false,
+          false) {
+      };
+
+  /**
    * The COLLECT operator. Multiset aggregator function.
    */
   public static final SqlAggFunction COLLECT =

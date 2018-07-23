@@ -94,6 +94,7 @@ import static org.apache.calcite.sql.fun.SqlStdOperatorTable.ABS;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.ACOS;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.AND;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.ANY_VALUE;
+import static org.apache.calcite.sql.fun.SqlStdOperatorTable.ARRAY_AGG;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.ARRAY_VALUE_CONSTRUCTOR;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.ASIN;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.ATAN;
@@ -447,6 +448,7 @@ public class RexImpTable {
     aggMap.put(ANY_VALUE, minMax);
     aggMap.put(SINGLE_VALUE, constructorSupplier(SingleValueImplementor.class));
     aggMap.put(COLLECT, constructorSupplier(CollectImplementor.class));
+    aggMap.put(ARRAY_AGG, constructorSupplier(ArrayAggImplementor.class));
     aggMap.put(FUSION, constructorSupplier(FusionImplementor.class));
     final Supplier<GroupingImplementor> grouping =
         constructorSupplier(GroupingImplementor.class);
@@ -464,6 +466,7 @@ public class RexImpTable {
     winAggMap.put(LAG, constructorSupplier(LagImplementor.class));
     winAggMap.put(NTILE, constructorSupplier(NtileImplementor.class));
     winAggMap.put(COUNT, constructorSupplier(CountWinImplementor.class));
+    winAggMap.put(ARRAY_AGG, constructorSupplier(ArrayAggWinImplementor.class));
   }
 
   private <T> Supplier<T> constructorSupplier(Class<T> klass) {
@@ -1274,6 +1277,93 @@ public class RexImpTable {
                   add.arguments().get(0))));
     }
   }
+
+  /** Implementor for the {@code COUNT} aggregate function. */
+  static class ArrayAggImplementor extends StrictAggImplementor {
+    @Override protected void implementNotNullReset(AggContext info,
+                                                   AggResetContext reset) {
+      // acc[0] = new ArrayList();
+      reset.currentBlock().add(
+              Expressions.statement(
+                      Expressions.assign(reset.accumulator().get(0),
+                              Expressions.new_(ArrayList.class))));
+    }
+
+    @Override public void implementNotNullAdd(AggContext info,
+                                              AggAddContext add) {
+      // acc[0].add(arg);
+      add.currentBlock().add(
+              Expressions.statement(
+                      Expressions.call(add.accumulator().get(0),
+                              BuiltInMethod.COLLECTION_ADD.method,
+                              add.arguments().get(0))));
+    }
+  }
+
+  /** Implementor for the {@code ARRAY_AGG} windowed aggregate function. */
+  static class ArrayAggWinImplementor implements WinAggImplementor {
+    public List<Type> getStateType(AggContext info) {
+      return Collections.emptyList();
+    }
+
+    public void implementReset(AggContext info, AggResetContext reset) {
+      reset.currentBlock().add(
+              Expressions.statement(
+                      Expressions.assign(reset.accumulator().get(0),
+                              Expressions.new_(ArrayList.class))));
+    }
+
+    public void implementAdd(AggContext info, AggAddContext add) {
+      add.currentBlock().add(
+              Expressions.statement(
+                      Expressions.call(add.accumulator().get(0),
+                              BuiltInMethod.COLLECTION_ADD.method,
+                              add.arguments().get(0))));
+    }
+
+    public boolean needCacheWhenFrameIntact() {
+      return true;
+    }
+
+    public Expression implementResult(AggContext info,
+                                      AggResultContext result) {
+//      WinAggResultContext winResult = (WinAggResultContext) result;
+
+//      List<RexNode> rexArgs = winResult.rexArguments();
+
+      ParameterExpression res = Expressions.parameter(0, info.returnType(),
+              result.currentBlock().newName("arr"));
+
+//      RexToLixTranslator currentRowTranslator =
+//              winResult.rowTranslator(
+//                      winResult.computeIndex(Expressions.constant(0), SeekType.START));
+//
+//      Expression dstIndex = winResult.computeIndex(
+//              Expressions.subtract(
+//                      currentRowTranslator.translate(rexArgs.get(1), int.class),
+//                      Expressions.constant(1)), SeekType.START);
+//
+//      Expression rowInRange = winResult.rowInPartition(dstIndex);
+//
+//      BlockBuilder thenBlock = result.nestBlock();
+//      Expression nthValue = winResult.rowTranslator(dstIndex)
+//              .translate(rexArgs.get(0), res.type);
+//      thenBlock.add(Expressions.statement(Expressions.assign(res, nthValue)));
+//      result.exitBlock();
+//      BlockStatement thenBranch = thenBlock.toBlock();
+//
+//      Expression defaultValue = getDefaultValue(res.type);
+//
+//      result.currentBlock().add(Expressions.declare(0, res, null));
+//      result.currentBlock().add(
+//              Expressions.ifThenElse(rowInRange, thenBranch,
+//                      Expressions.statement(Expressions.assign(res, defaultValue))));
+      return res;
+    }
+  }
+
+
+
 
   /** Implementor for the {@code FUSION} aggregate function. */
   static class FusionImplementor extends StrictAggImplementor {

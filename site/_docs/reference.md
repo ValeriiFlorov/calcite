@@ -1533,6 +1533,7 @@ Not implemented:
 | SUM(numeric) OVER window                  | Returns the sum of *numeric* across all values in *window*
 | MAX(value) OVER window                    | Returns the maximum value of *value* across all values in *window*
 | MIN(value) OVER window                    | Returns the minimum value of *value* across all values in *window*
+| ARRAY_AGG (value) OVER window             | Returns the array with all input values in *window*
 | RANK() OVER window                        | Returns the rank of the current row with gaps; same as ROW_NUMBER of its first peer
 | DENSE_RANK() OVER window                  | Returns the rank of the current row without gaps; this function counts peer groups
 | ROW_NUMBER() OVER window                  | Returns the number of the current row within its partition, counting from 1
