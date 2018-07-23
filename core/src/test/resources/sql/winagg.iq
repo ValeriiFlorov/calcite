@@ -455,4 +455,23 @@ from emp order by emp."ENAME";
 
 !ok
 
+# ARRAY_AGG
+select deptno, array_agg(ename) as "first_value"
+from emp
+group by deptno
+order by deptno;
++--------+----------------+
+| DEPTNO | first_value    |
++--------+----------------+
+|     10 | [Jane, Bob]    |
+|     20 | [Eric]         |
+|     30 | [Susan, Alice] |
+|     50 | [Adam, Eve]    |
+|     60 | [Grace]        |
+|        | [Wilma]        |
++--------+----------------+
+(6 rows)
+
+!ok
+
 # End winagg.iq

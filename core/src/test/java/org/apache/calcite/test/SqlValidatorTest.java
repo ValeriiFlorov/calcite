@@ -4098,6 +4098,7 @@ public class SqlValidatorTest extends SqlValidatorTestCase {
     winExp("percent_rank() over (order by empno)").ok();
     winExp("cume_dist() over (order by empno)").ok();
     winExp("nth_value(sal, 2) over (order by empno)").ok();
+    winExp("array_agg(sal) over (order by empno)").ok();
 
     // rule 6a
     // ORDER BY required with RANK & DENSE_RANK
@@ -7695,6 +7696,11 @@ public class SqlValidatorTest extends SqlValidatorTestCase {
     check("SELECT MAX(ename) FROM emp");
     check("SELECT MIN(5.5) FROM emp");
     check("SELECT MAX(5) FROM emp");
+  }
+
+  @Test public void testArrayAggFunction() {
+    check("select ARRAY_AGG(sal) over (order by empno) from emp");
+    check("select ARRAY_AGG(ename) over (order by empno) from emp");
   }
 
   @Test public void testAnyValueFunction() {

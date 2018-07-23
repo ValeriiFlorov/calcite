@@ -822,6 +822,9 @@ public enum SqlKind {
 
   // Aggregate functions
 
+  /** The {@code ARRAY_AGG} aggregate function. */
+  ARRAY_AGG,
+
   /** The {@code COUNT} aggregate function. */
   COUNT,
 
@@ -1067,7 +1070,7 @@ public enum SqlKind {
           LAST_VALUE, COVAR_POP, COVAR_SAMP, REGR_SXX, REGR_SYY,
           AVG, STDDEV_POP, STDDEV_SAMP, VAR_POP, VAR_SAMP, NTILE, COLLECT,
           FUSION, SINGLE_VALUE, ROW_NUMBER, RANK, PERCENT_RANK, DENSE_RANK,
-          CUME_DIST);
+          CUME_DIST, ARRAY_AGG);
 
   /**
    * Category consisting of all DML operators.

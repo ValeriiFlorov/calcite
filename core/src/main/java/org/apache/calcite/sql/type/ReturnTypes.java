@@ -300,6 +300,13 @@ public abstract class ReturnTypes {
   public static final SqlReturnTypeInference LEAST_RESTRICTIVE =
       opBinding -> opBinding.getTypeFactory().leastRestrictive(
           opBinding.collectOperandTypes());
+
+  /**
+   * Type-inference strategy that always returns "ARRAY".
+   */
+  public static final SqlReturnTypeInference ARRAY =
+          cascade(ARG0, SqlTypeTransforms.TO_ARRAY);
+
   /**
    * Returns the same type as the multiset carries. The multiset type returned
    * is the least restrictive of the call's multiset operands

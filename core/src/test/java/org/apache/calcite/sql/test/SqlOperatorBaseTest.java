@@ -5507,6 +5507,27 @@ public abstract class SqlOperatorBaseTest {
     tester.checkBoolean("multiset['q', 'a'] not submultiset of multiset['a', 'q']", Boolean.FALSE);
   }
 
+
+  @Test public void testArrayAggFunc() {
+    tester.setFor(SqlStdOperatorTable.ARRAY_AGG, VM_FENNEL, VM_JAVA);
+    tester.checkFails("array_agg(^*^)", "Unknown identifier '\\*'", false);
+    checkAggType(tester, "array_agg(1)", "INTEGER NOT NULL ARRAY NOT NULL");
+    checkAggType(tester,
+            "array_agg(1.2)", "DECIMAL(2, 1) NOT NULL ARRAY NOT NULL");
+    checkAggType(tester,
+            "array_agg(DISTINCT 1.5)", "DECIMAL(2, 1) NOT NULL ARRAY NOT NULL");
+    tester.checkFails("^array_agg()^",
+            "Invalid number of arguments to function 'ARRAY_AGG'. Was expecting 1 arguments",
+            false);
+    tester.checkFails("^array_agg(1, 2)^",
+            "Invalid number of arguments to function 'ARRAY_AGG'. Was expecting 1 arguments",
+            false);
+    final String[] values = {"0", "CAST(null AS INTEGER)", "2", "2"};
+    tester.checkAgg("array_agg(x)", values,
+            Collections.singletonList("[0, 2, 2]"), (double) 0);
+  }
+
+
   @Test public void testCollectFunc() {
     tester.setFor(SqlStdOperatorTable.COLLECT, VM_FENNEL, VM_JAVA);
     tester.checkFails("collect(^*^)", "Unknown identifier '\\*'", false);

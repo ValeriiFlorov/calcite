@@ -162,7 +162,17 @@ public abstract class SqlTypeTransforms {
       (opBinding, typeToTransform) ->
           opBinding.getTypeFactory().createMultisetType(typeToTransform, -1);
 
-  /**
+    /**
+     * Parameter type-inference transform strategy that wraps a given type
+     * in an array.
+     *
+     * @see org.apache.calcite.rel.type.RelDataTypeFactory#createMultisetType(RelDataType, long)
+     */
+  public static final SqlTypeTransform TO_ARRAY =
+      (opBinding, typeToTransform) ->
+          opBinding.getTypeFactory().createArrayType(typeToTransform, -1);
+
+    /**
    * Parameter type-inference transform strategy where a derived type must be
    * a struct type with precisely one field and the returned type is the type
    * of that field.
