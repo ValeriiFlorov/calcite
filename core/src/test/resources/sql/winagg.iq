@@ -463,12 +463,12 @@ order by deptno;
 +--------+----------------+
 | DEPTNO | first_value    |
 +--------+----------------+
-|        | {Wilma}        |
-|     10 | {Jane, Bob}    |
-|     20 | {Eric}         |
-|     30 | {Alice, Susan} |
-|     50 | {Adam, Eve}    |
-|     60 | {Grace}        |
+|     10 | [Jane, Bob]    |
+|     20 | [Eric]         |
+|     30 | [Susan, Alice] |
+|     50 | [Adam, Eve]    |
+|     60 | [Grace]        |
+|        | [Wilma]        |
 +--------+----------------+
 (6 rows)
 
