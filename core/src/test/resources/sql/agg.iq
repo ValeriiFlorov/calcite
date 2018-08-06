@@ -1138,6 +1138,35 @@ from (
 
 !ok
 
+!use post
+
+# ARRAY_AGG with group
+#select gender, array_agg(name) as arr from emps group by gender;
+#+--------+----------------+
+#| GENDER | ARR            |
+#+--------+----------------+
+#|        | [Fred]         |
+#| F      | [Wilma, Alice] |
+#| M      | [Eric, John]   |
+#+--------+----------------+
+#(3 rows)
+#
+#!ok
+
+# ARRAY_AGG with group
+select gender, array_agg(name order by name) as arr from emps group by gender;
++--------+----------------+
+| GENDER | ARR            |
++--------+----------------+
+|        | [Fred]         |
+| F      | [Alice, Wilma] |
+| M      | [Eric, John]   |
++--------+----------------+
+(3 rows)
+
+!ok
+!use scott
+
 # ARRAY_AGG
 select deptno, array_agg(empno) as empnos
 from "scott".emp
